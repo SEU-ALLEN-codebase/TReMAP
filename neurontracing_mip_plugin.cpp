@@ -160,7 +160,7 @@ bool neurontracing_mip::dofunc(const QString & func_name, const V3DPluginArgList
          //try to use as much as the default value in the PARA_APP2 constructor as possible
         P.mip_plane = (paras.size() >= k+1) ? atoi(paras[k]) : 0;  k++;
         P.channel = (paras.size() >= k+1) ? atoi(paras[k]) : 1;  k++;
-        P.bkg_thresh = paras.size() >= k+1 ? atoi(paras[k]) : bkg_thresh; if(bkg_thresh == atoi("AUTO")) bkg_thresh = -1;k++;
+        P.bkg_thresh = paras.size() >= k+1 ? atoi(paras[k]) : P.bkg_thresh; if(P.bkg_thresh == atoi("AUTO")) P.bkg_thresh = -1;k++;
         P.b_256cube = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
         P.is_gsdt = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
         P.is_break_accept = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
@@ -240,7 +240,7 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
         double imgAve, imgStd;
         if (Para.bkg_thresh < 0)
         {
-            if (Para.channel >=0 && P.channel <= p4DImage->getCDim()-1)
+            if (Para.channel >=0 && Para.channel <= p4DImage->getCDim()-1)
             {
                 mean_and_std(p4DImage->getRawDataAtChannel(Para.channel), p4DImage->getTotalUnitNumberPerChannel(), imgAve, imgStd);
                 Para.bkg_thresh = imgAve+0.5*imgStd ; //(imgAve < imgStd)? imgAve : (imgAve+imgStd)*.5;
@@ -583,13 +583,13 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
         if (thr < 0) thr = 0;
 
         #if  defined(Q_OS_LINUX)
-            QString cmd_APP2 = QString("%1/vaa3d -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p %4 %5 %6 %7 %8 %9 %10 %11").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(Para.inmarker_file.toStdString().c_str())
+            QString cmd_APP2 = QString("%1/vaa3d -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p %4 %5 %6 %7 %8 %9 %10 %11").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(Para.in_markerfile.toStdString().c_str())
                     .arg(Para.channel-1).arg(thr).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh);
             system(qPrintable(cmd_APP2));
             QString cmd_resample = QString("%1/vaa3d -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
             system(qPrintable(cmd_resample));
         #elif defined(Q_OS_MAC)
-            QString cmd_APP2 = QString("%1/vaa3d64.app/Contents/MacOS/vaa3d64 -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p %4 %5 %6 %7 %8 %9 %10% 11").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(Para.inmarker_file.toStdString().c_str())
+            QString cmd_APP2 = QString("%1/vaa3d64.app/Contents/MacOS/vaa3d64 -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p %4 %5 %6 %7 %8 %9 %10% 11").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(Para.in_markerfile.toStdString().c_str())
                     .arg(Para.channel-1).arg(thr).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh);
             system(qPrintable(cmd_APP2));
             QString cmd_resample = QString("%1//vaa3d64.app/Contents/MacOS/vaa3d64 -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
