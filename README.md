@@ -14,4 +14,4 @@ for 0, it means APP2 would do an auto thresholding(which should be mean + 0.5std
 
 Help is also updated.
 
-Also, since thr trace_raw is not used or shown in the help, no modification has been done.
+Also, since the trace_raw command is usually not used or shown in the help, no modification has been done.
