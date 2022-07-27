@@ -1179,25 +1179,25 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
 //    return;
 //}
 
-//QString getAppPath()
-//{
-//    QString v3dAppPath("~/Work/v3d_external/v3d");
-//    QDir testPluginsDir = QDir(qApp->applicationDirPath());
+QString getAppPath()
+{
+    QString v3dAppPath("~/Work/v3d_external/v3d");
+    QDir testPluginsDir = QDir(qApp->applicationDirPath());
 
-//#if defined(Q_OS_WIN)
-//    if (testPluginsDir.dirName().toLower() == "debug" || testPluginsDir.dirName().toLower() == "release")
-//        testPluginsDir.cdUp();
-//#elif defined(Q_OS_MAC)
-//    if (testPluginsDir.dirName() == "MacOS") {
-//        QDir testUpperPluginsDir = testPluginsDir;
-//        testUpperPluginsDir.cdUp();
-//        testUpperPluginsDir.cdUp();
-//        testUpperPluginsDir.cdUp(); // like foo/plugins next to foo/v3d.app
-//        if (testUpperPluginsDir.cd("plugins")) testPluginsDir = testUpperPluginsDir;
-//        testPluginsDir.cdUp();
-//    }
-//#endif
+#if defined(Q_OS_WIN)
+    if (testPluginsDir.dirName().toLower() == "debug" || testPluginsDir.dirName().toLower() == "release")
+        testPluginsDir.cdUp();
+#elif defined(Q_OS_MAC)
+    if (testPluginsDir.dirName() == "MacOS") {
+        QDir testUpperPluginsDir = testPluginsDir;
+        testUpperPluginsDir.cdUp();
+        testUpperPluginsDir.cdUp();
+        testUpperPluginsDir.cdUp(); // like foo/plugins next to foo/v3d.app
+        if (testUpperPluginsDir.cd("plugins")) testPluginsDir = testUpperPluginsDir;
+        testPluginsDir.cdUp();
+    }
+#endif
 
-//    v3dAppPath = testPluginsDir.absolutePath();
-//    return v3dAppPath;
-//}
+    v3dAppPath = testPluginsDir.absolutePath();
+    return v3dAppPath;
+}
