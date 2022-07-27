@@ -210,6 +210,8 @@ bool neurontracing_mip::dofunc(const QString & func_name, const V3DPluginArgList
         printf("\n**** Usage of TReMAP tracing ****\n");
         printf("vaa3d -x plugin_name -f trace_mip -i <inimg_file> -p <in_markerfile> <mip_plane> <channel> <bkg_thresh> <b_256cube> <is_gsdt> <is_gap> <length_thresh> <b_resample>\n");
         printf("inimg_file       Should be 8/16/32bit image\n");
+        printf("inmarker_file       If no input marker file, please set this para to NULL and it will detect soma automatically. \n"
+                       "                    When the file is set, then the first marker is used as root/soma.\n");
         printf("mip_plane        Maximum projection plane, 0 for XY plane, 1 for XZ plane, 2 for YZ plane, Default 0\n");
         printf("channel          Data channel for tracing. Start from 1 (default 1).\n");
         printf("bkg_thresh       Default 10 (is specified as -1 then auto-thresolding)\n");
