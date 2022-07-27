@@ -41,6 +41,7 @@ struct APP2_LS_PARA
     int root_1st[3];
     int mip_plane; //0 for XY, 1 for XZ, 2 for YZ
     QString in_markerfile;
+    int b_resample;
 
     Image4DSimple * image;
 
@@ -158,13 +159,15 @@ bool neurontracing_mip::dofunc(const QString & func_name, const V3DPluginArgList
         P.inimg_file = infiles[0];
         int k=0;
          //try to use as much as the default value in the PARA_APP2 constructor as possible
+        P.in_markerfile = (paras.size() >= k+1) ? paras[k]: ""; if(P.in_markerfile == "NULL") P.in_markerfile = ""; k++;
         P.mip_plane = (paras.size() >= k+1) ? atoi(paras[k]) : 0;  k++;
         P.channel = (paras.size() >= k+1) ? atoi(paras[k]) : 1;  k++;
-        P.bkg_thresh = paras.size() >= k+1 ? atoi(paras[k]) : P.bkg_thresh; if(P.bkg_thresh == atoi("AUTO")) P.bkg_thresh = -1;k++;
+        P.bkg_thresh = paras.size() >= k+1 ? atoi(paras[k]) : 10; if(P.bkg_thresh == atoi("AUTO")) P.bkg_thresh = -1;k++;
         P.b_256cube = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
         P.is_gsdt = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
         P.is_break_accept = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
         P.length_thresh = (paras.size() >= k+1) ? atof(paras[k]) : 5; k++;
+        P.b_resample = (paras.size() >= k+1) ? atoi(paras[k]) : 1; k++;
 
         P.cnn_type = 2;
         P.SR_ratio = 3.0/9.0;
@@ -205,7 +208,7 @@ bool neurontracing_mip::dofunc(const QString & func_name, const V3DPluginArgList
 	{
 
         printf("\n**** Usage of TReMAP tracing ****\n");
-        printf("vaa3d -x plugin_name -f trace_mip -i <inimg_file> -p <mip_plane> <channel> <bkg_thresh> <b_256cube> <is_gsdt> <is_gap> <length_thresh>\n");
+        printf("vaa3d -x plugin_name -f trace_mip -i <inimg_file> -p <in_markerfile> <mip_plane> <channel> <bkg_thresh> <b_256cube> <is_gsdt> <is_gap> <length_thresh> <b_resample>\n");
         printf("inimg_file       Should be 8/16/32bit image\n");
         printf("mip_plane        Maximum projection plane, 0 for XY plane, 1 for XZ plane, 2 for YZ plane, Default 0\n");
         printf("channel          Data channel for tracing. Start from 1 (default 1).\n");
@@ -215,6 +218,7 @@ bool neurontracing_mip::dofunc(const QString & func_name, const V3DPluginArgList
         printf("is_gsdt          If use gray-scale distance transform (1 for yes and 0 for no. Default 0.)\n");
         printf("is_gap           If allow gap (1 for yes and 0 for no. Default 0.)\n");
         printf("length_thresh    Default 5\n");
+        printf("b_resample       Whether to do resample(1 for yes and 0 for no). Default 1\n");
 
         printf("outswc_file      Will be named automatically based on the input image file name, so you don't have to specify it.\n\n");
 
@@ -584,16 +588,16 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
 
         #if  defined(Q_OS_LINUX)
             QString cmd_APP2 = QString("%1/vaa3d -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p %4 %5 %6 %7 %8 %9 %10 %11").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(Para.in_markerfile.toStdString().c_str())
-                    .arg(Para.channel-1).arg(thr).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh);
+                    .arg(Para.channel-1).arg(thr).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh).arg(Para.b_resample);
             system(qPrintable(cmd_APP2));
-            QString cmd_resample = QString("%1/vaa3d -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
-            system(qPrintable(cmd_resample));
+//            QString cmd_resample = QString("%1/vaa3d -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
+//            system(qPrintable(cmd_resample));
         #elif defined(Q_OS_MAC)
             QString cmd_APP2 = QString("%1/vaa3d64.app/Contents/MacOS/vaa3d64 -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p %4 %5 %6 %7 %8 %9 %10% 11").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(Para.in_markerfile.toStdString().c_str())
-                    .arg(Para.channel-1).arg(thr).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh);
+                    .arg(Para.channel-1).arg(thr).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh).arg(Para.b_resample);
             system(qPrintable(cmd_APP2));
-            QString cmd_resample = QString("%1//vaa3d64.app/Contents/MacOS/vaa3d64 -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
-            system(qPrintable(cmd_resample));
+//            QString cmd_resample = QString("%1//vaa3d64.app/Contents/MacOS/vaa3d64 -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
+//            system(qPrintable(cmd_resample));
         #else
                  v3d_msg("The OS is not Linux or Mac. Do nothing.");
                  return;
