@@ -243,19 +243,6 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
         Image4DSimple* p4DImage = callback.getImage(curwin);
         data1d = p4DImage->getRawData();
 
-        double imgAve, imgStd;
-        if (Para.bkg_thresh == 0)
-            if (Para.channel > 0 && Para.channel <= p4DImage->getCDim())
-            {
-                mean_and_std(p4DImage->getRawDataAtChannel(Para.channel - 1), p4DImage->getTotalUnitNumberPerChannel(), imgAve, imgStd);
-                Para.bkg_thresh = imgAve+0.5*imgStd ; //(imgAve < imgStd)? imgAve : (imgAve+imgStd)*.5;
-            }
-            else
-            {
-                fprintf(stderr, "Channel out of range. Exit. \n");
-                return;
-            }
-
         N = p4DImage->getXDim();
         M = p4DImage->getYDim();
         P = p4DImage->getZDim();
@@ -275,6 +262,19 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
         P = im_sz[2];
         C = im_sz[3];
 
+    }
+
+    double imgAve, imgStd;
+    if (Para.bkg_thresh == 0)
+    if (Para.channel > 0 && Para.channel <= C)
+    {
+        mean_and_std(data1d + N*M*P*(C-1), N*M*P, imgAve, imgStd);
+        Para.bkg_thresh = imgAve+0.5*imgStd ; //(imgAve < imgStd)? imgAve : (imgAve+imgStd)*.5;
+    }
+    else
+    {
+        fprintf(stderr, "Channel out of range. Exit. \n");
+        return;
     }
 
     int th = Para.bkg_thresh;
