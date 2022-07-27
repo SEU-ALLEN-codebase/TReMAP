@@ -11,3 +11,7 @@ Made a few changes:
 
 3. Auto bkg_thr:whole image block's mean + 0.5std, used for both region grow thr and APP2. For APP2 it's decreased by 5, but greater or equal than 0(In the past when it was lower than 0, it could cause a bug).
 for 0, it means APP2 would do an auto thresholding(which should be mean + 0.5std, depending on your APP2 version).
+
+Help is also updated.
+
+Also, since thr trace_raw is not used or shown in the help, no modification has been done.
