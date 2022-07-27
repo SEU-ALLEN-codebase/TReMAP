@@ -11,7 +11,7 @@
 #include "stackutil.h"
 #include "volimg_proc.h"
 
-#include "../../../hackathon/zhi/APP2_large_scale/readRawfile_func.h"
+//#include "../../../hackathon/zhi/APP2_large_scale/readRawfile_func.h"
 
 #include "fastmarching_linker.h"
 
@@ -159,10 +159,10 @@ bool neurontracing_mip::dofunc(const QString & func_name, const V3DPluginArgList
         P.inimg_file = infiles[0];
         int k=0;
          //try to use as much as the default value in the PARA_APP2 constructor as possible
-        P.in_markerfile = (paras.size() >= k+1) ? paras[k]: ""; if(P.in_markerfile == "NULL") P.in_markerfile = ""; k++;
+        P.in_markerfile = (paras.size() >= k+1) ? paras[k]: "NULL"; k++;
         P.mip_plane = (paras.size() >= k+1) ? atoi(paras[k]) : 0;  k++;
         P.channel = (paras.size() >= k+1) ? atoi(paras[k]) : 1;  k++;
-        P.bkg_thresh = paras.size() >= k+1 ? atoi(paras[k]) : 10; if(P.bkg_thresh == atoi("AUTO")) P.bkg_thresh = -1;k++;
+        P.bkg_thresh = paras.size() >= k+1 ? atoi(paras[k]) : 10; k++;
         P.b_256cube = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
         P.is_gsdt = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
         P.is_break_accept = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
@@ -175,46 +175,46 @@ bool neurontracing_mip::dofunc(const QString & func_name, const V3DPluginArgList
         autotrace_largeScale_mip(callback,parent,P,bmenu);
 
 	}
-    else if (func_name == tr("trace_raw"))
-    {
+//    else if (func_name == tr("trace_raw"))
+//    {
 
-        APP2_LS_PARA P;
-        bool bmenu = false;
+//        APP2_LS_PARA P;
+//        bool bmenu = false;
 
-        vector<char*> * pinfiles = (input.size() >= 1) ? (vector<char*> *) input[0].p : 0;
-        vector<char*> * pparas = (input.size() >= 2) ? (vector<char*> *) input[1].p : 0;
-        vector<char*> infiles = (pinfiles != 0) ? * pinfiles : vector<char*>();
-        vector<char*> paras = (pparas != 0) ? * pparas : vector<char*>();
+//        vector<char*> * pinfiles = (input.size() >= 1) ? (vector<char*> *) input[0].p : 0;
+//        vector<char*> * pparas = (input.size() >= 2) ? (vector<char*> *) input[1].p : 0;
+//        vector<char*> infiles = (pinfiles != 0) ? * pinfiles : vector<char*>();
+//        vector<char*> paras = (pparas != 0) ? * pparas : vector<char*>();
 
-        P.inimg_file = infiles[0];
-        int k=0;
-         //try to use as much as the default value in the PARA_APP2 constructor as possible
-        P.mip_image_file = paras[0]; k++;
-        P.channel = (paras.size() >= k+1) ? atoi(paras[k]) : 1;  k++;
-        P.bkg_thresh = (paras.size() >= k+1) ? atoi(paras[k]) : 10; k++;
-        P.b_256cube = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
-        P.is_gsdt = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
-        P.is_break_accept = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
-        P.length_thresh = (paras.size() >= k+1) ? atof(paras[k]) : 5; k++;
+//        P.inimg_file = infiles[0];
+//        int k=0;
+//         //try to use as much as the default value in the PARA_APP2 constructor as possible
+//        P.mip_image_file = paras[0]; k++;
+//        P.channel = (paras.size() >= k+1) ? atoi(paras[k]) : 1;  k++;
+//        P.bkg_thresh = (paras.size() >= k+1) ? atoi(paras[k]) : 10; k++;
+//        P.b_256cube = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
+//        P.is_gsdt = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
+//        P.is_break_accept = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
+//        P.length_thresh = (paras.size() >= k+1) ? atof(paras[k]) : 5; k++;
 
-        P.cnn_type = 2;
-        P.SR_ratio = 3.0/9.0;
-        P.b_RadiusFrom2D = 1;
+//        P.cnn_type = 2;
+//        P.SR_ratio = 3.0/9.0;
+//        P.b_RadiusFrom2D = 1;
 
-        autotrace_largeScale_raw(callback,parent,P,bmenu);
+//        autotrace_largeScale_raw(callback,parent,P,bmenu);
 
-    }
+//    }
 	else if (func_name == tr("help"))
 	{
 
         printf("\n**** Usage of TReMAP tracing ****\n");
         printf("vaa3d -x plugin_name -f trace_mip -i <inimg_file> -p <in_markerfile> <mip_plane> <channel> <bkg_thresh> <b_256cube> <is_gsdt> <is_gap> <length_thresh> <b_resample>\n");
         printf("inimg_file       Should be 8/16/32bit image\n");
-        printf("inmarker_file       If no input marker file, please set this para to NULL and it will detect soma automatically. \n"
-                       "                    When the file is set, then the first marker is used as root/soma.\n");
+        printf("inmarker_file    If no input marker file, please set this para to NULL and it will detect soma automatically. \n"
+                       "         When the file is set, then the first marker is used as root/soma.\n");
         printf("mip_plane        Maximum projection plane, 0 for XY plane, 1 for XZ plane, 2 for YZ plane, Default 0\n");
         printf("channel          Data channel for tracing. Start from 1 (default 1).\n");
-        printf("bkg_thresh       Default 10 (is specified as -1 then auto-thresolding)\n");
+        printf("bkg_thresh       Default 10 (if specified as 0 then auto-thresolding)\n");
 
         printf("b_256cube        If trace in a auto-downsampled volume (1 for yes, and 0 for no. Default 0.)\n");
         printf("is_gsdt          If use gray-scale distance transform (1 for yes and 0 for no. Default 0.)\n");
@@ -244,17 +244,17 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
         data1d = p4DImage->getRawData();
 
         double imgAve, imgStd;
-        if (Para.bkg_thresh < 0)
-        {
-            if (Para.channel >=0 && Para.channel <= p4DImage->getCDim()-1)
+        if (Para.bkg_thresh == 0)
+            if (Para.channel > 0 && Para.channel <= p4DImage->getCDim())
             {
-                mean_and_std(p4DImage->getRawDataAtChannel(Para.channel), p4DImage->getTotalUnitNumberPerChannel(), imgAve, imgStd);
+                mean_and_std(p4DImage->getRawDataAtChannel(Para.channel - 1), p4DImage->getTotalUnitNumberPerChannel(), imgAve, imgStd);
                 Para.bkg_thresh = imgAve+0.5*imgStd ; //(imgAve < imgStd)? imgAve : (imgAve+imgStd)*.5;
             }
             else
-                Para.bkg_thresh = 0;
-
-        }
+            {
+                fprintf(stderr, "Channel out of range. Exit. \n");
+                return;
+            }
 
         N = p4DImage->getXDim();
         M = p4DImage->getYDim();
@@ -831,373 +831,373 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
    return;
 }
 
-void autotrace_largeScale_raw(V3DPluginCallback2 &callback, QWidget *parent,APP2_LS_PARA &Para,bool bmenu)
-{
-    QString image_name = Para.inimg_file;
-    QString image_mip_name = Para.mip_image_file;
+//void autotrace_largeScale_raw(V3DPluginCallback2 &callback, QWidget *parent,APP2_LS_PARA &Para,bool bmenu)
+//{
+//    QString image_name = Para.inimg_file;
+//    QString image_mip_name = Para.mip_image_file;
 
-    unsigned char *image_mip=0;
-    V3DLONG *im_sz = 0;
-    int datatype = 0;
-    if (loadImage(const_cast<char *>(image_mip_name.toStdString().c_str()), image_mip, im_sz, datatype)!=true)
-    {
-        fprintf (stderr, "Error happens in reading the subject file [%s]. Exit. \n",image_name.toStdString().c_str());
-        return;
-    }
+//    unsigned char *image_mip=0;
+//    V3DLONG *im_sz = 0;
+//    int datatype = 0;
+//    if (loadImage(const_cast<char *>(image_mip_name.toStdString().c_str()), image_mip, im_sz, datatype)!=true)
+//    {
+//        fprintf (stderr, "Error happens in reading the subject file [%s]. Exit. \n",image_name.toStdString().c_str());
+//        return;
+//    }
 
-    QString tmpfolder = QFileInfo(image_name).path()+("/") + QFileInfo(image_name).completeBaseName()+("_tmp");
-    system(qPrintable(QString("mkdir %1").arg(tmpfolder.toStdString().c_str())));
-    if(tmpfolder.isEmpty())
-    {
+//    QString tmpfolder = QFileInfo(image_name).path()+("/") + QFileInfo(image_name).completeBaseName()+("_tmp");
+//    system(qPrintable(QString("mkdir %1").arg(tmpfolder.toStdString().c_str())));
+//    if(tmpfolder.isEmpty())
+//    {
 
-        printf("Can not create a tmp folder!\n");
-        return;
-    }
+//        printf("Can not create a tmp folder!\n");
+//        return;
+//    }
 
-    QString output_image_name = tmpfolder +"/region.raw";
+//    QString output_image_name = tmpfolder +"/region.raw";
 
-    #if  defined(Q_OS_LINUX)
-    QString cmd_region = QString("%1/vaa3d -x regiongrow -f rg -i %2 -o %3 -p 1 2 1 200 %4").arg(getAppPath().toStdString().c_str()).arg(image_mip_name.toStdString().c_str()).arg(output_image_name.toStdString().c_str()).arg(Para.bkg_thresh);
-        system(qPrintable(cmd_region));
-    #elif defined(Q_OS_MAC)
-        QString cmd_region = QString("%1/vaa3d64.app/Contents/MacOS/vaa3d64 -x regiongrow -f rg -i %2 -o %3 -p 1 2 1 200 %4").arg(getAppPath().toStdString().c_str()).arg(image_mip_name.toStdString().c_str()).arg(output_image_name.toStdString().c_str()).arg(Para.bkg_thresh);
-        system(qPrintable(cmd_region));
-    #else
-        v3d_msg("The OS is not Linux or Mac. Do nothing.");
-        return;
-    #endif
+//    #if  defined(Q_OS_LINUX)
+//    QString cmd_region = QString("%1/vaa3d -x regiongrow -f rg -i %2 -o %3 -p 1 2 1 200 %4").arg(getAppPath().toStdString().c_str()).arg(image_mip_name.toStdString().c_str()).arg(output_image_name.toStdString().c_str()).arg(Para.bkg_thresh);
+//        system(qPrintable(cmd_region));
+//    #elif defined(Q_OS_MAC)
+//        QString cmd_region = QString("%1/vaa3d64.app/Contents/MacOS/vaa3d64 -x regiongrow -f rg -i %2 -o %3 -p 1 2 1 200 %4").arg(getAppPath().toStdString().c_str()).arg(image_mip_name.toStdString().c_str()).arg(output_image_name.toStdString().c_str()).arg(Para.bkg_thresh);
+//        system(qPrintable(cmd_region));
+//    #else
+//        v3d_msg("The OS is not Linux or Mac. Do nothing.");
+//        return;
+//    #endif
 
-    unsigned char * image_region = 0;
-    V3DLONG in_zz[4];
-    if(!simple_loadimage_wrapper(callback, output_image_name.toStdString().c_str(), image_region, in_zz, datatype))
-    {
-       v3d_msg("Fail to load image");
-       return;
-    }
+//    unsigned char * image_region = 0;
+//    V3DLONG in_zz[4];
+//    if(!simple_loadimage_wrapper(callback, output_image_name.toStdString().c_str(), image_region, in_zz, datatype))
+//    {
+//       v3d_msg("Fail to load image");
+//       return;
+//    }
 
-    V3DLONG pagesz_mip = in_zz[0]*in_zz[1]*in_zz[2];
-    int groupNum = 0;
-    for(V3DLONG i = 0; i < pagesz_mip; i++)
-    {
-        if(image_region[i] > groupNum)
-            groupNum = image_region[i];
-    }
+//    V3DLONG pagesz_mip = in_zz[0]*in_zz[1]*in_zz[2];
+//    int groupNum = 0;
+//    for(V3DLONG i = 0; i < pagesz_mip; i++)
+//    {
+//        if(image_region[i] > groupNum)
+//            groupNum = image_region[i];
+//    }
 
-    int *groupArray = new int[groupNum];
-    int *groupIndex = new int[groupNum];
+//    int *groupArray = new int[groupNum];
+//    int *groupIndex = new int[groupNum];
 
-    for(int i = 0; i < groupNum; i++)
-    {
-        groupArray[i] = 0;
-        groupIndex[i] = i+1;
-    }
+//    for(int i = 0; i < groupNum; i++)
+//    {
+//        groupArray[i] = 0;
+//        groupIndex[i] = i+1;
+//    }
 
-    for(V3DLONG i = 0; i < pagesz_mip; i++)
-    {
-        if(image_region[i] > 0)
-            groupArray[image_region[i] - 1] += 1;
-    }
+//    for(V3DLONG i = 0; i < pagesz_mip; i++)
+//    {
+//        if(image_region[i] > 0)
+//            groupArray[image_region[i] - 1] += 1;
+//    }
 
-    int tmp_index,tmp;
-    for(V3DLONG i = 0; i < groupNum; i++)
-    {
-        if (i > 0)
-        {
-            V3DLONG j = i;
-            while(j > 0 && groupArray[j-1]<groupArray[j])
-            {
-                tmp = groupArray[j];
-                groupArray[j] = groupArray[j-1];
-                groupArray[j-1] = tmp;
+//    int tmp_index,tmp;
+//    for(V3DLONG i = 0; i < groupNum; i++)
+//    {
+//        if (i > 0)
+//        {
+//            V3DLONG j = i;
+//            while(j > 0 && groupArray[j-1]<groupArray[j])
+//            {
+//                tmp = groupArray[j];
+//                groupArray[j] = groupArray[j-1];
+//                groupArray[j-1] = tmp;
 
-                tmp_index = groupIndex[j];
-                groupIndex[j] = groupIndex[j-1];
-                groupIndex[j-1] = tmp_index;
+//                tmp_index = groupIndex[j];
+//                groupIndex[j] = groupIndex[j-1];
+//                groupIndex[j-1] = tmp_index;
 
-                j--;
-            }
-        }
-    }
-
-
-    int groupmax = 5;
-    if(groupNum <= groupmax) groupmax = groupNum;
-    vector<MyMarker*> outswc_final;
-    for(int dd = 0; dd < groupmax; dd++)
-    {
-        unsigned char *image_region_one = new unsigned char [pagesz_mip];
-        V3DLONG group_type = groupIndex[dd];
+//                j--;
+//            }
+//        }
+//    }
 
 
-        for(V3DLONG i = 0; i < pagesz_mip*datatype; i++)
-        {
-
-            if(image_region[i] == group_type)
-                image_region_one[int(i/datatype)] = image_mip[int(i/datatype)];
-            else
-                image_region_one[int(i/datatype)] = 0;
-        }
-
-        QString APP2_image_name = tmpfolder + "/group_one.raw";
-        simple_saveimage_wrapper(callback, APP2_image_name.toStdString().c_str(),  (unsigned char *)image_region_one, im_sz, V3D_UINT8);
-        if(image_region_one) {delete []image_region_one; image_region_one = 0;}
-
-        QString APP2_swc =  APP2_image_name + QString("_group_%1.swc").arg(group_type);
+//    int groupmax = 5;
+//    if(groupNum <= groupmax) groupmax = groupNum;
+//    vector<MyMarker*> outswc_final;
+//    for(int dd = 0; dd < groupmax; dd++)
+//    {
+//        unsigned char *image_region_one = new unsigned char [pagesz_mip];
+//        V3DLONG group_type = groupIndex[dd];
 
 
-#if  defined(Q_OS_LINUX)
-        QString cmd_APP2 = QString("%1/vaa3d -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p NULL %4 %5 %6 %7 %8 %9 %10").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str())
-                .arg(Para.channel-1).arg(Para.bkg_thresh - 5).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh);
-        system(qPrintable(cmd_APP2));
-        QString cmd_resample = QString("%1/vaa3d -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
-        system(qPrintable(cmd_resample));
-#elif defined(Q_OS_MAC)
-        QString cmd_APP2 = QString("%1/vaa3d64.app/Contents/MacOS/vaa3d64 -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p NULL %4 %5 %6 %7 %8 %9 %10").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str())
-                .arg(Para.channel-1).arg(Para.bkg_thresh - 5).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh);
-        system(qPrintable(cmd_APP2));
-        QString cmd_resample = QString("%1//vaa3d64.app/Contents/MacOS/vaa3d64 -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
-        system(qPrintable(cmd_resample));
-#else
-        v3d_msg("The OS is not Linux or Mac. Do nothing.");
-        return;
-#endif
-        NeuronTree nt = readSWC_file(APP2_swc);
+//        for(V3DLONG i = 0; i < pagesz_mip*datatype; i++)
+//        {
 
-        V3DLONG siz = nt.listNeuron.size();
-        Tree tree;
-        for (V3DLONG i=0;i<siz;i++)
-        {
-            NeuronSWC s = nt.listNeuron[i];
-            Point* pt = new Point;
-            pt->x = s.x;
-            pt->y = s.y;
-            pt->z = s.z;
-            pt->r = s.r;
-            pt ->type = s.type;
-            pt->p = NULL;
-            pt->childNum = 0;
-            tree.push_back(pt);
-        }
-        for (V3DLONG i=0;i<siz;i++)
-        {
-            if (nt.listNeuron[i].pn<0) continue;
-            V3DLONG pid = nt.hashNeuron.value(nt.listNeuron[i].pn);
-            tree[i]->p = tree[pid];
-            tree[pid]->childNum++;
-        }
-     //	printf("tree constructed.\n");
-        vector<Segment*> seg_list;
-        for (V3DLONG i=0;i<siz;i++)
-        {
-            if (tree[i]->childNum!=1)//tip or branch point
-            {
-                Segment* seg = new Segment;
-                Point* cur = tree[i];
-                do
-                {
-                    seg->push_back(cur);
-                    cur = cur->p;
-                }
-                while(cur && cur->childNum==1);
-                seg_list.push_back(seg);
-            }
-        }
+//            if(image_region[i] == group_type)
+//                image_region_one[int(i/datatype)] = image_mip[int(i/datatype)];
+//            else
+//                image_region_one[int(i/datatype)] = 0;
+//        }
 
-        vector<MyMarker*> outswc;
+//        QString APP2_image_name = tmpfolder + "/group_one.raw";
+//        simple_saveimage_wrapper(callback, APP2_image_name.toStdString().c_str(),  (unsigned char *)image_region_one, im_sz, V3D_UINT8);
+//        if(image_region_one) {delete []image_region_one; image_region_one = 0;}
 
-        unsigned char * data1d = 0;
-        V3DLONG *im3D_zz = 0;
-        V3DLONG *im3D_sz = 0;
-
-        int datatype;
-        if (!loadRawRegion(const_cast<char *>(image_name.toStdString().c_str()), data1d, im3D_zz, im3D_sz,datatype,0,0,0,1,1,1))
-        {
-            return;
-        }
-
-        if(data1d) {delete []data1d; data1d = 0;}
-        V3DLONG N = im3D_zz[0];
-        V3DLONG M = im3D_zz[1];
-        V3DLONG P = im3D_zz[2];
+//        QString APP2_swc =  APP2_image_name + QString("_group_%1.swc").arg(group_type);
 
 
-        for (V3DLONG i=0;i<seg_list.size();i++)
-        {
-            V3DLONG xb = N-1;
-            V3DLONG xe = 0;
-            V3DLONG yb = M-1;
-            V3DLONG ye = 0;
+//#if  defined(Q_OS_LINUX)
+//        QString cmd_APP2 = QString("%1/vaa3d -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p NULL %4 %5 %6 %7 %8 %9 %10").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str())
+//                .arg(Para.channel-1).arg(Para.bkg_thresh - 5).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh);
+//        system(qPrintable(cmd_APP2));
+//        QString cmd_resample = QString("%1/vaa3d -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
+//        system(qPrintable(cmd_resample));
+//#elif defined(Q_OS_MAC)
+//        QString cmd_APP2 = QString("%1/vaa3d64.app/Contents/MacOS/vaa3d64 -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p NULL %4 %5 %6 %7 %8 %9 %10").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str())
+//                .arg(Para.channel-1).arg(Para.bkg_thresh - 5).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh);
+//        system(qPrintable(cmd_APP2));
+//        QString cmd_resample = QString("%1//vaa3d64.app/Contents/MacOS/vaa3d64 -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
+//        system(qPrintable(cmd_resample));
+//#else
+//        v3d_msg("The OS is not Linux or Mac. Do nothing.");
+//        return;
+//#endif
+//        NeuronTree nt = readSWC_file(APP2_swc);
 
-            for (V3DLONG j=0;j<seg_list[i]->size();j++)
-            {
-                Point* node = seg_list[i]->at(j);
-                if(node->x < xb) xb = node->x;
-                if(node->x > xe) xe = node->x;
-                if(node->y < yb) yb = node->y;
-                if(node->y > ye) ye = node->y;
-            }
+//        V3DLONG siz = nt.listNeuron.size();
+//        Tree tree;
+//        for (V3DLONG i=0;i<siz;i++)
+//        {
+//            NeuronSWC s = nt.listNeuron[i];
+//            Point* pt = new Point;
+//            pt->x = s.x;
+//            pt->y = s.y;
+//            pt->z = s.z;
+//            pt->r = s.r;
+//            pt ->type = s.type;
+//            pt->p = NULL;
+//            pt->childNum = 0;
+//            tree.push_back(pt);
+//        }
+//        for (V3DLONG i=0;i<siz;i++)
+//        {
+//            if (nt.listNeuron[i].pn<0) continue;
+//            V3DLONG pid = nt.hashNeuron.value(nt.listNeuron[i].pn);
+//            tree[i]->p = tree[pid];
+//            tree[pid]->childNum++;
+//        }
+//     //	printf("tree constructed.\n");
+//        vector<Segment*> seg_list;
+//        for (V3DLONG i=0;i<siz;i++)
+//        {
+//            if (tree[i]->childNum!=1)//tip or branch point
+//            {
+//                Segment* seg = new Segment;
+//                Point* cur = tree[i];
+//                do
+//                {
+//                    seg->push_back(cur);
+//                    cur = cur->p;
+//                }
+//                while(cur && cur->childNum==1);
+//                seg_list.push_back(seg);
+//            }
+//        }
 
-            vector<MyMarker> nearpos_vec, farpos_vec; // for near/far locs testing
-            nearpos_vec.clear();
-            farpos_vec.clear();
-            if(seg_list[i]->size() > 2)
-            {
-                for (V3DLONG j=0;j<seg_list[i]->size();j++)
-                {
-                    Point* node = seg_list[i]->at(j);
-                    XYZ loc0_t, loc1_t;
-                    loc0_t = XYZ(node->x, node->y,  node->z);
-                    loc1_t = XYZ(node->x, node->y,  P-1);
-                    XYZ loc0 = loc0_t;
-                    XYZ loc1 = loc1_t;
+//        vector<MyMarker*> outswc;
 
-                    nearpos_vec.push_back(MyMarker(loc0.x - xb, loc0.y - yb, loc0.z));
-                    farpos_vec.push_back(MyMarker(loc1.x - xb, loc1.y - yb, loc1.z));
-                }
+//        unsigned char * data1d = 0;
+//        V3DLONG *im3D_zz = 0;
+//        V3DLONG *im3D_sz = 0;
 
-                if (!loadRawRegion(const_cast<char *>(image_name.toStdString().c_str()), data1d, im3D_zz, im3D_sz,datatype,xb,yb,0,xe+1,ye+1,P))
-                {
-                    printf("can not load the region");
-                    if(data1d) {delete []data1d; data1d = 0;}
-                    return;
-                }
+//        int datatype;
+//        if (!loadRawRegion(const_cast<char *>(image_name.toStdString().c_str()), data1d, im3D_zz, im3D_sz,datatype,0,0,0,1,1,1))
+//        {
+//            return;
+//        }
 
-                fastmarching_drawing_dynamic(nearpos_vec, farpos_vec, (unsigned char*)data1d, outswc, xe-xb+1,ye-yb+1,P, 1, 5);
-             //   smooth_curve(outswc,5);
-
-                for(V3DLONG d = 0; d <outswc.size(); d++)
-                {
-                    outswc[d]->radius = 2;
-                    outswc[d]->type = dd + 2;
-                    outswc[d]->x = outswc[d]->x + xb;
-                    outswc[d]->y = outswc[d]->y + yb;
-                    outswc_final.push_back(outswc[d]);
-                }
-                if(data1d) {delete []data1d; data1d = 0;}
-                outswc.clear();
-            }
-            else if(seg_list[i]->size() == 2)
-            {
-                Point* node1 = seg_list[i]->at(0);
-                Point* node2 = seg_list[i]->at(1);
-
-                for (V3DLONG j=0;j<3;j++)
-                {
-                    XYZ loc0_t, loc1_t;
-                    if(j ==0)
-                    {
-                        loc0_t = XYZ(node1->x, node1->y,  node1->z);
-                        loc1_t = XYZ(node1->x, node1->y,  P-1);
-                    }
-                    else if(j ==1)
-                    {
-                        loc0_t = XYZ(0.5*(node1->x + node2->x), 0.5*(node1->y + node2->y),  0.5*(node1->z + node2->z));
-                        loc1_t = XYZ(0.5*(node1->x + node2->x),  0.5*(node1->y + node2->y),  P-1);
-
-                    }
-                    else
-                    {
-                        loc0_t = XYZ(node2->x, node2->y,  node2->z);
-                        loc1_t = XYZ(node2->x, node2->y,  P-1);
-                    }
-
-                    XYZ loc0 = loc0_t;
-                    XYZ loc1 = loc1_t;
-
-                    nearpos_vec.push_back(MyMarker(loc0.x - xb, loc0.y - yb, loc0.z));
-                    farpos_vec.push_back(MyMarker(loc1.x - xb, loc1.y - yb, loc1.z));
-                 }
-
-                if (!loadRawRegion(const_cast<char *>(image_name.toStdString().c_str()), data1d, im3D_zz, im3D_sz,datatype,xb,yb,0,xe+1,ye+1,P))
-                {
-                    printf("can not load the region");
-                    if(data1d) {delete []data1d; data1d = 0;}
-                    return;
-                }
-
-                fastmarching_drawing_dynamic(nearpos_vec, farpos_vec, (unsigned char*)data1d, outswc, xe-xb+1,ye-yb+1,P, 1, 5);
-               // smooth_curve(outswc,5);
+//        if(data1d) {delete []data1d; data1d = 0;}
+//        V3DLONG N = im3D_zz[0];
+//        V3DLONG M = im3D_zz[1];
+//        V3DLONG P = im3D_zz[2];
 
 
-                for(V3DLONG d = 0; d <outswc.size(); d++)
-                {
-                    outswc[d]->radius = 2;
-                    outswc[d]->type = dd + 2;
-                    outswc[d]->x = outswc[d]->x + xb;
-                    outswc[d]->y = outswc[d]->y + yb;
-                    outswc_final.push_back(outswc[d]);
-                }
-                if(data1d) {delete []data1d; data1d = 0;}
-                outswc.clear();
+//        for (V3DLONG i=0;i<seg_list.size();i++)
+//        {
+//            V3DLONG xb = N-1;
+//            V3DLONG xe = 0;
+//            V3DLONG yb = M-1;
+//            V3DLONG ye = 0;
 
-            }
-//            QString APP2_image_name = tmpfolder +  QString("/raw_%1.raw").arg(i);
-//            simple_saveimage_wrapper(callback, APP2_image_name.toStdString().c_str(),  (unsigned char *)data1d, im3D_sz, V3D_UINT8);
-//            QString final_swc = tmpfolder + QString("/raw_%1.swc").arg(i);
-//            saveSWC_file(final_swc.toStdString(), outswc_final);
-//            outswc_final.clear();
+//            for (V3DLONG j=0;j<seg_list[i]->size();j++)
+//            {
+//                Point* node = seg_list[i]->at(j);
+//                if(node->x < xb) xb = node->x;
+//                if(node->x > xe) xe = node->x;
+//                if(node->y < yb) yb = node->y;
+//                if(node->y > ye) ye = node->y;
+//            }
 
-        }
-  //      return;
+//            vector<MyMarker> nearpos_vec, farpos_vec; // for near/far locs testing
+//            nearpos_vec.clear();
+//            farpos_vec.clear();
+//            if(seg_list[i]->size() > 2)
+//            {
+//                for (V3DLONG j=0;j<seg_list[i]->size();j++)
+//                {
+//                    Point* node = seg_list[i]->at(j);
+//                    XYZ loc0_t, loc1_t;
+//                    loc0_t = XYZ(node->x, node->y,  node->z);
+//                    loc1_t = XYZ(node->x, node->y,  P-1);
+//                    XYZ loc0 = loc0_t;
+//                    XYZ loc1 = loc1_t;
 
-    }
+//                    nearpos_vec.push_back(MyMarker(loc0.x - xb, loc0.y - yb, loc0.z));
+//                    farpos_vec.push_back(MyMarker(loc1.x - xb, loc1.y - yb, loc1.z));
+//                }
 
-    QString final_swc = image_name + "_raw_3D_TreMap.swc";
-   // system(qPrintable(QString("rm -r %1").arg(tmpfolder.toStdString().c_str())));
+//                if (!loadRawRegion(const_cast<char *>(image_name.toStdString().c_str()), data1d, im3D_zz, im3D_sz,datatype,xb,yb,0,xe+1,ye+1,P))
+//                {
+//                    printf("can not load the region");
+//                    if(data1d) {delete []data1d; data1d = 0;}
+//                    return;
+//                }
 
-    saveSWC_file(final_swc.toStdString(), outswc_final);
+//                fastmarching_drawing_dynamic(nearpos_vec, farpos_vec, (unsigned char*)data1d, outswc, xe-xb+1,ye-yb+1,P, 1, 5);
+//             //   smooth_curve(outswc,5);
 
-    V3DPluginArgItem arg;
-    V3DPluginArgList input_resample;
-    V3DPluginArgList input_sort;
-    V3DPluginArgList output;
+//                for(V3DLONG d = 0; d <outswc.size(); d++)
+//                {
+//                    outswc[d]->radius = 2;
+//                    outswc[d]->type = dd + 2;
+//                    outswc[d]->x = outswc[d]->x + xb;
+//                    outswc[d]->y = outswc[d]->y + yb;
+//                    outswc_final.push_back(outswc[d]);
+//                }
+//                if(data1d) {delete []data1d; data1d = 0;}
+//                outswc.clear();
+//            }
+//            else if(seg_list[i]->size() == 2)
+//            {
+//                Point* node1 = seg_list[i]->at(0);
+//                Point* node2 = seg_list[i]->at(1);
 
-    arg.type = "random";std::vector<char*> arg_input_resample;
-    std:: string fileName_Qstring(final_swc.toStdString());char* fileName_string =  new char[fileName_Qstring.length() + 1]; strcpy(fileName_string, fileName_Qstring.c_str());
-    arg_input_resample.push_back(fileName_string);
-    arg.p = (void *) & arg_input_resample; input_resample<< arg;
-    arg.type = "random";std::vector<char*> arg_resample_para; arg_resample_para.push_back("10");arg.p = (void *) & arg_resample_para; input_resample << arg;
-    arg.type = "random";std::vector<char*> arg_output;arg_output.push_back(fileName_string); arg.p = (void *) & arg_output; output<< arg;
+//                for (V3DLONG j=0;j<3;j++)
+//                {
+//                    XYZ loc0_t, loc1_t;
+//                    if(j ==0)
+//                    {
+//                        loc0_t = XYZ(node1->x, node1->y,  node1->z);
+//                        loc1_t = XYZ(node1->x, node1->y,  P-1);
+//                    }
+//                    else if(j ==1)
+//                    {
+//                        loc0_t = XYZ(0.5*(node1->x + node2->x), 0.5*(node1->y + node2->y),  0.5*(node1->z + node2->z));
+//                        loc1_t = XYZ(0.5*(node1->x + node2->x),  0.5*(node1->y + node2->y),  P-1);
 
-    QString full_plugin_name_resample = "resample_swc";
-    QString func_name_resample = "resample_swc";
-    callback.callPluginFunc(full_plugin_name_resample,func_name_resample,input_resample,output);
+//                    }
+//                    else
+//                    {
+//                        loc0_t = XYZ(node2->x, node2->y,  node2->z);
+//                        loc1_t = XYZ(node2->x, node2->y,  P-1);
+//                    }
 
-    arg.type = "random";std::vector<char*> arg_input_sort;
-    arg_input_sort.push_back(fileName_string);
-    arg.p = (void *) & arg_input_sort; input_sort<< arg;
-    arg.type = "random";std::vector<char*> arg_sort_para; arg_sort_para.push_back("20");arg.p = (void *) & arg_sort_para; input_sort << arg;
-    QString full_plugin_name_sort = "sort_neuron_swc";
-    QString func_name_sort = "sort_swc";
-    callback.callPluginFunc(full_plugin_name_sort,func_name_sort, input_sort,output);
+//                    XYZ loc0 = loc0_t;
+//                    XYZ loc1 = loc1_t;
 
-    vector<MyMarker*> temp_out_swc = readSWC_file(final_swc.toStdString());
-    saveSWC_file_TreMap(final_swc.toStdString(), temp_out_swc);
+//                    nearpos_vec.push_back(MyMarker(loc0.x - xb, loc0.y - yb, loc0.z));
+//                    farpos_vec.push_back(MyMarker(loc1.x - xb, loc1.y - yb, loc1.z));
+//                 }
 
-    v3d_msg(QString("Now you can drag and drop the generated swc fle [%1] into Vaa3D.").arg(final_swc.toStdString().c_str()),bmenu);
+//                if (!loadRawRegion(const_cast<char *>(image_name.toStdString().c_str()), data1d, im3D_zz, im3D_sz,datatype,xb,yb,0,xe+1,ye+1,P))
+//                {
+//                    printf("can not load the region");
+//                    if(data1d) {delete []data1d; data1d = 0;}
+//                    return;
+//                }
 
-    return;
-}
+//                fastmarching_drawing_dynamic(nearpos_vec, farpos_vec, (unsigned char*)data1d, outswc, xe-xb+1,ye-yb+1,P, 1, 5);
+//               // smooth_curve(outswc,5);
 
-QString getAppPath()
-{
-    QString v3dAppPath("~/Work/v3d_external/v3d");
-    QDir testPluginsDir = QDir(qApp->applicationDirPath());
 
-#if defined(Q_OS_WIN)
-    if (testPluginsDir.dirName().toLower() == "debug" || testPluginsDir.dirName().toLower() == "release")
-        testPluginsDir.cdUp();
-#elif defined(Q_OS_MAC)
-    if (testPluginsDir.dirName() == "MacOS") {
-        QDir testUpperPluginsDir = testPluginsDir;
-        testUpperPluginsDir.cdUp();
-        testUpperPluginsDir.cdUp();
-        testUpperPluginsDir.cdUp(); // like foo/plugins next to foo/v3d.app
-        if (testUpperPluginsDir.cd("plugins")) testPluginsDir = testUpperPluginsDir;
-        testPluginsDir.cdUp();
-    }
-#endif
+//                for(V3DLONG d = 0; d <outswc.size(); d++)
+//                {
+//                    outswc[d]->radius = 2;
+//                    outswc[d]->type = dd + 2;
+//                    outswc[d]->x = outswc[d]->x + xb;
+//                    outswc[d]->y = outswc[d]->y + yb;
+//                    outswc_final.push_back(outswc[d]);
+//                }
+//                if(data1d) {delete []data1d; data1d = 0;}
+//                outswc.clear();
 
-    v3dAppPath = testPluginsDir.absolutePath();
-    return v3dAppPath;
-}
+//            }
+////            QString APP2_image_name = tmpfolder +  QString("/raw_%1.raw").arg(i);
+////            simple_saveimage_wrapper(callback, APP2_image_name.toStdString().c_str(),  (unsigned char *)data1d, im3D_sz, V3D_UINT8);
+////            QString final_swc = tmpfolder + QString("/raw_%1.swc").arg(i);
+////            saveSWC_file(final_swc.toStdString(), outswc_final);
+////            outswc_final.clear();
+
+//        }
+//  //      return;
+
+//    }
+
+//    QString final_swc = image_name + "_raw_3D_TreMap.swc";
+//   // system(qPrintable(QString("rm -r %1").arg(tmpfolder.toStdString().c_str())));
+
+//    saveSWC_file(final_swc.toStdString(), outswc_final);
+
+//    V3DPluginArgItem arg;
+//    V3DPluginArgList input_resample;
+//    V3DPluginArgList input_sort;
+//    V3DPluginArgList output;
+
+//    arg.type = "random";std::vector<char*> arg_input_resample;
+//    std:: string fileName_Qstring(final_swc.toStdString());char* fileName_string =  new char[fileName_Qstring.length() + 1]; strcpy(fileName_string, fileName_Qstring.c_str());
+//    arg_input_resample.push_back(fileName_string);
+//    arg.p = (void *) & arg_input_resample; input_resample<< arg;
+//    arg.type = "random";std::vector<char*> arg_resample_para; arg_resample_para.push_back("10");arg.p = (void *) & arg_resample_para; input_resample << arg;
+//    arg.type = "random";std::vector<char*> arg_output;arg_output.push_back(fileName_string); arg.p = (void *) & arg_output; output<< arg;
+
+//    QString full_plugin_name_resample = "resample_swc";
+//    QString func_name_resample = "resample_swc";
+//    callback.callPluginFunc(full_plugin_name_resample,func_name_resample,input_resample,output);
+
+//    arg.type = "random";std::vector<char*> arg_input_sort;
+//    arg_input_sort.push_back(fileName_string);
+//    arg.p = (void *) & arg_input_sort; input_sort<< arg;
+//    arg.type = "random";std::vector<char*> arg_sort_para; arg_sort_para.push_back("20");arg.p = (void *) & arg_sort_para; input_sort << arg;
+//    QString full_plugin_name_sort = "sort_neuron_swc";
+//    QString func_name_sort = "sort_swc";
+//    callback.callPluginFunc(full_plugin_name_sort,func_name_sort, input_sort,output);
+
+//    vector<MyMarker*> temp_out_swc = readSWC_file(final_swc.toStdString());
+//    saveSWC_file_TreMap(final_swc.toStdString(), temp_out_swc);
+
+//    v3d_msg(QString("Now you can drag and drop the generated swc fle [%1] into Vaa3D.").arg(final_swc.toStdString().c_str()),bmenu);
+
+//    return;
+//}
+
+//QString getAppPath()
+//{
+//    QString v3dAppPath("~/Work/v3d_external/v3d");
+//    QDir testPluginsDir = QDir(qApp->applicationDirPath());
+
+//#if defined(Q_OS_WIN)
+//    if (testPluginsDir.dirName().toLower() == "debug" || testPluginsDir.dirName().toLower() == "release")
+//        testPluginsDir.cdUp();
+//#elif defined(Q_OS_MAC)
+//    if (testPluginsDir.dirName() == "MacOS") {
+//        QDir testUpperPluginsDir = testPluginsDir;
+//        testUpperPluginsDir.cdUp();
+//        testUpperPluginsDir.cdUp();
+//        testUpperPluginsDir.cdUp(); // like foo/plugins next to foo/v3d.app
+//        if (testUpperPluginsDir.cd("plugins")) testPluginsDir = testUpperPluginsDir;
+//        testPluginsDir.cdUp();
+//    }
+//#endif
+
+//    v3dAppPath = testPluginsDir.absolutePath();
+//    return v3dAppPath;
+//}
