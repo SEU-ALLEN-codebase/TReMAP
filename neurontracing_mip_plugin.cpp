@@ -871,7 +871,7 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
                 float yy = t.y - nt.listNeuron[i].y;
                 float zz = t.z - nt.listNeuron[i].z;
                 float dist = xx * xx + yy * yy + zz * zz;
-                if (nt.listNeuron[i].parent == -1 && (dist < mindist || minn == -1))
+                if (dist < mindist || minn == -1)
                 {
                     mindist = dist;
                     minn = nt.listNeuron[i].n;
