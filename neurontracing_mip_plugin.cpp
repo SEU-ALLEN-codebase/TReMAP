@@ -273,6 +273,7 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
     {
         mean_and_std(data1d + N*M*P*(C-1), N*M*P, imgAve, imgStd);
         Para.bkg_thresh = imgAve+0.5*imgStd ; //(imgAve < imgStd)? imgAve : (imgAve+imgStd)*.5;
+        printf("auto thr = %d\n", Para.bkg_thresh);
     }
     else
     {
@@ -590,7 +591,7 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
 
         int thr = Para.bkg_thresh - 5;
         if (thr < 0) thr = 0;
-
+        printf("app2_bkg_thr = %d\n", thr);
         #if  defined(Q_OS_LINUX)
             QString cmd_APP2 = QString("%1/vaa3d -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p NULL %4 %5 %6 %7 %8 %9 %10 %11").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str())
                     .arg(Para.channel-1).arg(thr).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh).arg(Para.b_resample);
@@ -773,6 +774,23 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
                }
                outswc.clear();
            }
+           // clear
+           for (int i = 0; i < seg_list.size(); ++i)
+           {
+               if (seg_list[i])
+               {
+                   delete seg_list[i];
+                   seg_list[i] = NULL;
+               }
+           }
+           for (int i = 0; i < tree.size(); ++i)
+           {
+               if (tree[i])
+               {
+                   delete tree[i];
+                   tree[i] = NULL;
+               }
+           }
        }
 
 //       QString group_swc = tmpfolder + QString("/raw_%1.swc").arg(dd);
@@ -866,10 +884,30 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
    arg.type = "random";std::vector<char*> arg_input_sort;
    arg_input_sort.push_back(fileName_string);
    arg.p = (void *) & arg_input_sort; input_sort<< arg;
-   arg.type = "random";std::vector<const char*> arg_sort_para;
-   arg_sort_para.push_back(QString::number(Para.link_dist).toStdString().c_str());
-   if (minn != -1) arg_sort_para.push_back(QString::number(minn).toStdString().c_str());
+   arg.type = "random";std::vector<char*> arg_sort_para;
+   QString link_dist = QString::number(Para.link_dist);
+   char* link_dist_str = new char[link_dist.length() + 1];
+   strcpy(link_dist_str, link_dist.toStdString().c_str());
+   if (link_dist_str)
+   {
+       delete [] link_dist_str;
+       link_dist_str = NULL;
+   }
+   arg_sort_para.push_back(link_dist_str);
+   if (minn != -1)
+   {
+       QString minn_qs = QString::number(minn);
+       char* minn_str = new char[minn_qs.length() + 1];
+       strcpy(minn_str, minn_qs.toStdString().c_str());
+       arg_sort_para.push_back(minn_str);
+       if (minn_str)
+       {
+           delete [] minn_str;
+           minn_str = NULL;
+       }
+   }
    arg.p = (void *) & arg_sort_para; input_sort << arg;
+   arg.type = "random";std::vector<char*> arg_output;arg_output.push_back(fileName_string); arg.p = (void *) & arg_output; output<< arg;
    QString full_plugin_name_sort = "sort_neuron_swc";
    QString func_name_sort = "sort_swc";
    callback.callPluginFunc(full_plugin_name_sort,func_name_sort, input_sort,output);
@@ -882,7 +920,11 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
        if(data1d) {delete []data1d; data1d = 0;}
    }
 
-
+   if (fileName_string)
+   {
+       delete [] fileName_string;
+       fileName_string = NULL;
+   }
    v3d_msg(QString("Now you can drag and drop the generated swc fle [%1] into Vaa3D.").arg(final_swc.toStdString().c_str()),bmenu);
 
    return;
