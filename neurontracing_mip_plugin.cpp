@@ -832,7 +832,7 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
            t.x = file_inmarkers[i].x;
            t.y = file_inmarkers[i].y;
            t.z = file_inmarkers[i].z;
-           if(t.x<0 || t.x>=N || t.y<0 || t.y>M || t.z<0 || t.z>P)
+           if(t.x<0 || t.x>N || t.y<0 || t.y>M || t.z<0 || t.z>P)
            {
                if(i==0)
                {
