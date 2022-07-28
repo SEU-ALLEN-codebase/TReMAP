@@ -310,7 +310,7 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
     V3DLONG pagesz_mip = mip_sz[0]*mip_sz[1]*mip_sz[2];
     unsigned char *image_mip=0;
     try {image_mip = new unsigned char [pagesz_mip];}
-    catch(...)  {v3d_msg("cannot allocate memory for image_mip."); return;}
+    catch(...)  {v3d_msg("cannot allocate memory for image_mip.", bmenu); return;}
 
     switch (Para.mip_plane)
     {
@@ -377,7 +377,7 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
 
     unsigned char *image_binary=0;
     try {image_binary = new unsigned char [pagesz_mip];}
-    catch(...)  {v3d_msg("cannot allocate memory for image_binary."); return;}
+    catch(...)  {v3d_msg("cannot allocate memory for image_binary.", bmenu); return;}
     for(V3DLONG i = 0; i < pagesz_mip; i++)
     {
         if(image_mip[i] > th)
@@ -388,7 +388,7 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
 
     unsigned char *image_binary_median=0;
     try {image_binary_median = new unsigned char [pagesz_mip];}
-    catch(...)  {v3d_msg("cannot allocate memory for image_binary_median."); return;}
+    catch(...)  {v3d_msg("cannot allocate memory for image_binary_median.", bmenu); return;}
 
     int *arr,tmp;
     int ii,jj;
@@ -473,7 +473,7 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
         QString cmd_region = QString("%1/vaa3d64.app/Contents/MacOS/vaa3d64 -x regiongrow -f rg -i %2 -o %3 -p 1 0 1 400").arg(getAppPath().toStdString().c_str()).arg(input_image_name.toStdString().c_str()).arg(output_image_name.toStdString().c_str());
         system(qPrintable(cmd_region));
     #else
-        v3d_msg("The OS is not Linux or Mac. Do nothing.");
+        v3d_msg("The OS is not Linux or Mac. Do nothing.", bmenu);
         return;
     #endif
 
@@ -482,7 +482,7 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
    V3DLONG in_zz[4];
    if(!simple_loadimage_wrapper(callback, output_image_name.toStdString().c_str(), image_region, in_zz, datatype))
    {
-       v3d_msg("Fail to load image");
+       v3d_msg("Fail to load image", bmenu);
        return;
    }
 
@@ -610,7 +610,7 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
                 QString cmd_resample = QString("%1//vaa3d64.app/Contents/MacOS/vaa3d64 -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
             }
         #else
-                 v3d_msg("The OS is not Linux or Mac. Do nothing.");
+                 v3d_msg("The OS is not Linux or Mac. Do nothing.", bmenu);
                  return;
         #endif
 
@@ -832,11 +832,11 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
            t.x = file_inmarkers[i].x;
            t.y = file_inmarkers[i].y;
            t.z = file_inmarkers[i].z;
-           if(t.x<0 || t.x>N || t.y<0 || t.y>M || t.z<0 || t.z>P)
+           if(t.x<0 || t.x>=N || t.y<0 || t.y>=M || t.z<0 || t.z>=P)
            {
                if(i==0)
                {
-                   v3d_msg("The first marker is invalid.");
+                   v3d_msg("The first marker is invalid.", bmenu);
                    return;
                }
                else continue;
