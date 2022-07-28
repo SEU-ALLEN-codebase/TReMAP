@@ -42,6 +42,7 @@ struct APP2_LS_PARA
     int mip_plane; //0 for XY, 1 for XZ, 2 for YZ
     QString in_markerfile;
     int b_resample;
+    int link_dist;
 
     Image4DSimple * image;
 
@@ -168,6 +169,7 @@ bool neurontracing_mip::dofunc(const QString & func_name, const V3DPluginArgList
         P.is_break_accept = (paras.size() >= k+1) ? atoi(paras[k]) : 0; k++;
         P.length_thresh = (paras.size() >= k+1) ? atof(paras[k]) : 5; k++;
         P.b_resample = (paras.size() >= k+1) ? atoi(paras[k]) : 1; k++;
+        P.link_dist = (paras.size() >= k+1) ? atoi(paras[k]) : 20; k++;
 
         P.cnn_type = 2;
         P.SR_ratio = 3.0/9.0;
@@ -208,9 +210,9 @@ bool neurontracing_mip::dofunc(const QString & func_name, const V3DPluginArgList
 	{
 
         printf("\n**** Usage of TReMAP tracing ****\n");
-        printf("vaa3d -x plugin_name -f trace_mip -i <inimg_file> -p <in_markerfile> <mip_plane> <channel> <bkg_thresh> <b_256cube> <is_gsdt> <is_gap> <length_thresh> <b_resample>\n");
+        printf("vaa3d -x plugin_name -f trace_mip -i <inimg_file> -p <in_markerfile> <mip_plane> <channel> <bkg_thresh> <b_256cube> <is_gsdt> <is_gap> <length_thresh> <b_resample> <link_dist>\n");
         printf("inimg_file       Should be 8/16/32bit image\n");
-        printf("inmarker_file    If no input marker file, please set this para to NULL and it will detect soma automatically. \n"
+        printf("in_markerfile    If no input marker file, please set this para to NULL and it will detect soma automatically. \n"
                        "         When the file is set, then the first marker is used as root/soma.\n");
         printf("mip_plane        Maximum projection plane, 0 for XY plane, 1 for XZ plane, 2 for YZ plane, Default 0\n");
         printf("channel          Data channel for tracing. Start from 1 (default 1).\n");
@@ -221,6 +223,7 @@ bool neurontracing_mip::dofunc(const QString & func_name, const V3DPluginArgList
         printf("is_gap           If allow gap (1 for yes and 0 for no. Default 0.)\n");
         printf("length_thresh    Default 5\n");
         printf("b_resample       Whether to do resample(1 for yes and 0 for no). Default 1\n");
+        printf("link_dist        In the final sorting of swc, max dist gap between the broken nodes to be linked. Default 20.\n");
 
         printf("outswc_file      Will be named automatically based on the input image file name, so you don't have to specify it.\n\n");
 
@@ -589,17 +592,23 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
         if (thr < 0) thr = 0;
 
         #if  defined(Q_OS_LINUX)
-            QString cmd_APP2 = QString("%1/vaa3d -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p %4 %5 %6 %7 %8 %9 %10 %11 %12").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(Para.in_markerfile.toStdString().c_str())
+            QString cmd_APP2 = QString("%1/vaa3d -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p NULL %4 %5 %6 %7 %8 %9 %10 %11").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str())
                     .arg(Para.channel-1).arg(thr).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh).arg(Para.b_resample);
             system(qPrintable(cmd_APP2));
-//            QString cmd_resample = QString("%1/vaa3d -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
-//            system(qPrintable(cmd_resample));
+            if (Para.b_resample)
+            {
+                QString cmd_resample = QString("%1/vaa3d -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
+                system(qPrintable(cmd_resample));
+            }
         #elif defined(Q_OS_MAC)
-            QString cmd_APP2 = QString("%1/vaa3d64.app/Contents/MacOS/vaa3d64 -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p %4 %5 %6 %7 %8 %9 %10 %11 %12").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(Para.in_markerfile.toStdString().c_str())
+            QString cmd_APP2 = QString("%1/vaa3d64.app/Contents/MacOS/vaa3d64 -x Vaa3D_Neuron2 -f app2 -i %2 -o %3 -p NULL %4 %5 %6 %7 %8 %9 %10 %11").arg(getAppPath().toStdString().c_str()).arg(APP2_image_name.toStdString().c_str()).arg(APP2_swc.toStdString().c_str())
                     .arg(Para.channel-1).arg(thr).arg(Para.b_256cube).arg(Para.b_RadiusFrom2D).arg(Para.is_gsdt).arg(Para.is_break_accept).arg(Para.length_thresh).arg(Para.b_resample);
             system(qPrintable(cmd_APP2));
-//            QString cmd_resample = QString("%1//vaa3d64.app/Contents/MacOS/vaa3d64 -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
-//            system(qPrintable(cmd_resample));
+            if (Para.b_resample)
+            {
+                system(qPrintable(cmd_resample));
+                QString cmd_resample = QString("%1//vaa3d64.app/Contents/MacOS/vaa3d64 -x resample_swc -f resample_swc -i %2 -o %3 -p 2").arg(getAppPath().toStdString().c_str()).arg(APP2_swc.toStdString().c_str()).arg(APP2_swc.toStdString().c_str());
+            }
         #else
                  v3d_msg("The OS is not Linux or Mac. Do nothing.");
                  return;
@@ -797,22 +806,70 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
    V3DPluginArgList input_resample;
    V3DPluginArgList input_sort;
    V3DPluginArgList output;
+    std:: string fileName_Qstring(final_swc.toStdString());char* fileName_string =  new char[fileName_Qstring.length() + 1]; strcpy(fileName_string, fileName_Qstring.c_str());
 
-   arg.type = "random";std::vector<char*> arg_input_resample;
-   std:: string fileName_Qstring(final_swc.toStdString());char* fileName_string =  new char[fileName_Qstring.length() + 1]; strcpy(fileName_string, fileName_Qstring.c_str());
-   arg_input_resample.push_back(fileName_string);
-   arg.p = (void *) & arg_input_resample; input_resample<< arg;
-   arg.type = "random";std::vector<char*> arg_resample_para; arg_resample_para.push_back("10");arg.p = (void *) & arg_resample_para; input_resample << arg;
-   arg.type = "random";std::vector<char*> arg_output;arg_output.push_back(fileName_string); arg.p = (void *) & arg_output; output<< arg;
+   if (Para.b_resample)
+   {
+       arg.type = "random";std::vector<char*> arg_input_resample;
+       arg_input_resample.push_back(fileName_string);
+       arg.p = (void *) & arg_input_resample; input_resample<< arg;
+       arg.type = "random";std::vector<char*> arg_resample_para; arg_resample_para.push_back("10");arg.p = (void *) & arg_resample_para; input_resample << arg;
+       arg.type = "random";std::vector<char*> arg_output;arg_output.push_back(fileName_string); arg.p = (void *) & arg_output; output<< arg;
 
-   QString full_plugin_name_resample = "resample_swc";
-   QString func_name_resample = "resample_swc";
-   callback.callPluginFunc(full_plugin_name_resample,func_name_resample,input_resample,output);
+       QString full_plugin_name_resample = "resample_swc";
+       QString func_name_resample = "resample_swc";
+       callback.callPluginFunc(full_plugin_name_resample,func_name_resample,input_resample,output);
+   }
+   int minn = -1;
+   if(Para.in_markerfile != "NULL")
+   {
+
+       auto file_inmarkers = readMarker_file(string(qPrintable(Para.in_markerfile)));
+       vector<LocationSimple> landmarks;
+       LocationSimple t;
+       for(int i = 0; i < file_inmarkers.size(); i++)
+       {
+           t.x = file_inmarkers[i].x;
+           t.y = file_inmarkers[i].y;
+           t.z = file_inmarkers[i].z;
+           if(t.x<0 || t.x>=N || t.y<0 || t.y>M || t.z<0 || t.z>P)
+           {
+               if(i==0)
+               {
+                   v3d_msg("The first marker is invalid.");
+                   return;
+               }
+               else continue;
+           }
+           landmarks.push_back(t);
+       }
+       if (landmarks.size() > 0)
+       {
+           t = landmarks[0];
+           NeuronTree nt = readSWC_file(final_swc);
+           float mindist = 0;
+           for (int i = 0; i < nt.listNeuron.size(); ++i)
+           {
+                auto xx = t.x - nt.listNeuron[i].x;
+                auto yy = t.y - nt.listNeuron[i].y;
+                auto zz = t.z - nt.listNeuron[i].z;
+                float dist = xx * xx + yy * yy + zz * zz;
+                if (nt.listNeuron[i].parent == -1 && (dist < mindist || minn == -1))
+                {
+                    mindist = dist;
+                    minn = nt.listNeuron[i].n;
+                }
+           }
+       }
+   }
 
    arg.type = "random";std::vector<char*> arg_input_sort;
    arg_input_sort.push_back(fileName_string);
    arg.p = (void *) & arg_input_sort; input_sort<< arg;
-   arg.type = "random";std::vector<char*> arg_sort_para; arg_sort_para.push_back("20");arg.p = (void *) & arg_sort_para; input_sort << arg;
+   arg.type = "random";std::vector<const char*> arg_sort_para;
+   arg_sort_para.push_back(QString::number(Para.link_dist).toStdString().c_str());
+   if (minn != -1) arg_sort_para.push_back(QString::number(minn).toStdString().c_str());
+   arg.p = (void *) & arg_sort_para; input_sort << arg;
    QString full_plugin_name_sort = "sort_neuron_swc";
    QString func_name_sort = "sort_swc";
    callback.callPluginFunc(full_plugin_name_sort,func_name_sort, input_sort,output);
