@@ -774,25 +774,24 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
                }
                outswc.clear();
            }
-           // clear
-           for (int i = 0; i < seg_list.size(); ++i)
+       }
+       // clear
+       for (int i = 0; i < seg_list.size(); ++i)
+       {
+           if (seg_list[i])
            {
-               if (seg_list[i])
-               {
-                   delete seg_list[i];
-                   seg_list[i] = NULL;
-               }
-           }
-           for (int i = 0; i < tree.size(); ++i)
-           {
-               if (tree[i])
-               {
-                   delete tree[i];
-                   tree[i] = NULL;
-               }
+               delete seg_list[i];
+               seg_list[i] = NULL;
            }
        }
-
+       for (int i = 0; i < tree.size(); ++i)
+       {
+           if (tree[i])
+           {
+               delete tree[i];
+               tree[i] = NULL;
+           }
+       }
 //       QString group_swc = tmpfolder + QString("/raw_%1.swc").arg(dd);
 //       saveSWC_file(group_swc.toStdString(), outswc_final);
 //       outswc_final.clear();
@@ -888,23 +887,13 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
    QString link_dist = QString::number(Para.link_dist);
    char* link_dist_str = new char[link_dist.length() + 1];
    strcpy(link_dist_str, link_dist.toStdString().c_str());
-   if (link_dist_str)
-   {
-       delete [] link_dist_str;
-       link_dist_str = NULL;
-   }
    arg_sort_para.push_back(link_dist_str);
+   QString minn_qs = QString::number(minn);
+   char* minn_str = new char[minn_qs.length() + 1];
    if (minn != -1)
    {
-       QString minn_qs = QString::number(minn);
-       char* minn_str = new char[minn_qs.length() + 1];
        strcpy(minn_str, minn_qs.toStdString().c_str());
        arg_sort_para.push_back(minn_str);
-       if (minn_str)
-       {
-           delete [] minn_str;
-           minn_str = NULL;
-       }
    }
    arg.p = (void *) & arg_sort_para; input_sort << arg;
    arg.type = "random";std::vector<char*> arg_output;arg_output.push_back(fileName_string); arg.p = (void *) & arg_output; output<< arg;
@@ -915,6 +904,16 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
    vector<MyMarker*> temp_out_swc = readSWC_file(final_swc.toStdString());
    saveSWC_file_TreMap(final_swc.toStdString(), temp_out_swc);
    temp_out_swc.clear();
+   if (link_dist_str)
+   {
+       delete [] link_dist_str;
+       link_dist_str = NULL;
+   }
+   if (minn_str)
+   {
+       delete [] minn_str;
+       minn_str = NULL;
+   }
    if(!bmenu)
    {
        if(data1d) {delete []data1d; data1d = 0;}
