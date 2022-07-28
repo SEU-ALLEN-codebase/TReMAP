@@ -824,7 +824,7 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
    if(Para.in_markerfile != "NULL")
    {
 
-       auto file_inmarkers = readMarker_file(string(qPrintable(Para.in_markerfile)));
+       vector<MyMarker> file_inmarkers = readMarker_file(string(qPrintable(Para.in_markerfile)));
        vector<LocationSimple> landmarks;
        LocationSimple t;
        for(int i = 0; i < file_inmarkers.size(); i++)
@@ -850,9 +850,9 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
            float mindist = 0;
            for (int i = 0; i < nt.listNeuron.size(); ++i)
            {
-                auto xx = t.x - nt.listNeuron[i].x;
-                auto yy = t.y - nt.listNeuron[i].y;
-                auto zz = t.z - nt.listNeuron[i].z;
+                float xx = t.x - nt.listNeuron[i].x;
+                float yy = t.y - nt.listNeuron[i].y;
+                float zz = t.z - nt.listNeuron[i].z;
                 float dist = xx * xx + yy * yy + zz * zz;
                 if (nt.listNeuron[i].parent == -1 && (dist < mindist || minn == -1))
                 {
