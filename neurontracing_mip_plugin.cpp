@@ -43,6 +43,7 @@ struct APP2_LS_PARA
     QString in_markerfile;
     int b_resample;
     int link_dist;
+    QString out_file;
 
     Image4DSimple * image;
 
@@ -154,10 +155,12 @@ bool neurontracing_mip::dofunc(const QString & func_name, const V3DPluginArgList
 
         vector<char*> * pinfiles = (input.size() >= 1) ? (vector<char*> *) input[0].p : 0;
         vector<char*> * pparas = (input.size() >= 2) ? (vector<char*> *) input[1].p : 0;
+        vector<char*>* outfiles = (output.size() >= 1) ? (vector<char*>*) output[0].p: 0;
         vector<char*> infiles = (pinfiles != 0) ? * pinfiles : vector<char*>();
         vector<char*> paras = (pparas != 0) ? * pparas : vector<char*>();
 
         P.inimg_file = infiles[0];
+        P.out_file = outfiles != 0 ? outfiles->at(0): "";
         int k=0;
          //try to use as much as the default value in the PARA_APP2 constructor as possible
         P.in_markerfile = (paras.size() >= k+1) ? paras[k]: "NULL"; k++;
@@ -803,14 +806,17 @@ void autotrace_largeScale_mip(V3DPluginCallback2 &callback, QWidget *parent,APP2
    if(groupIndex) {delete []groupIndex; groupIndex = 0;}
 
    QString swc_2D,final_swc;
-   switch (Para.mip_plane)
-   {
-       case 0: swc_2D = image_name + "_XY_2D_mip.swc"; final_swc = image_name + "_XY_3D_TreMap.swc"; break;
-       case 1: swc_2D = image_name + "_XZ_2D_mip.swc"; final_swc = image_name + "_XZ_3D_TreMap.swc"; break;
-       case 2: swc_2D = image_name + "_YZ_2D_mip.swc"; final_swc = image_name + "_YZ_3D_TreMap.swc"; break;
-       default:
-           return;
-   }
+   if (Para.out_file != "")
+       final_swc = Para.out_file;
+   else
+       switch (Para.mip_plane)
+       {
+           case 0: swc_2D = image_name + "_XY_2D_mip.swc"; final_swc = image_name + "_XY_3D_TreMap.swc"; break;
+           case 1: swc_2D = image_name + "_XZ_2D_mip.swc"; final_swc = image_name + "_XZ_3D_TreMap.swc"; break;
+           case 2: swc_2D = image_name + "_YZ_2D_mip.swc"; final_swc = image_name + "_YZ_3D_TreMap.swc"; break;
+           default:
+               return;
+       }
 
    saveSWC_file(final_swc.toStdString(), outswc_final);
    outswc_final.clear();
